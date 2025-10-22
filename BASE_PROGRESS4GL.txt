@@ -222,7 +222,8 @@ END PROCEDURE
 
 - MANIPULAÇÃO DE BANCO 
 
-| FIN FIRST |
+* PESQUISAS
+| FIND | -> | FIRST | LAST | NEXT | PREV
 
 DEF VAR iCount AS INT.
         /*
@@ -235,7 +236,61 @@ DEF VAR iCount AS INT.
  END.
 */
 
-FIND FIRST cliente. //achar o registro mais novo, 
+FIND FIRST cliente. //achar o primeiro registro 
+
+MESSAGE cliente.id VIEW-AS ALERT-BOX.
+
+FIND LAST cliente. //achar o ultimo registro 
+
+MESSAGE cliente.id VIEW-AS ALERT-BOX.
+
+FIND NEXT cliente. //pega o proximo registro do mostrado  
+
+MESSAGE cliente.id VIEW-AS ALERT-BOX.
+
+FIND PREV cliente.  //pega o anterior do registro mostrado
 
 MESSAGE cliente.id VIEW-AS ALERT-BOX
 
+| NO-LOCK | EXCLUSIVE-LOCK |
+
+FIND LAST cliente WHERE cliente.id = 24
+                        AND client.data_nasc = TODAY NO-LOCK.
+//EXCLUSIVE-LOCK: modificar um campo da tabela que esta no find travasse o registro
+//NO-LOCK: Vai olhr/ver um registro
+MESSAGE cliente.id VIEW-AS ALERT-BOX.
+
+| NO-ERROR | AVAIL |
+
+FIND LAST cliente WHERE cliente.nome = "aliSSON"
+                        AND client.data_nasc = TODAY NO-ERROR.
+                        
+IF NOT AVAIL cliente THEN 
+DO:
+  MESSAGE "NÃO ENCONTRADO" VIEW-AS ALERT-BOX.  
+END.
+//AVAIL: verifica se o registro existe na memoria, no caso se o find conseguiu achar e guardou na memoria. 
+//NO-ERRO: impede que o programa pare, caso alguma validação pare.
+
+| FOR EACH | BREAK BY | -> DESCENDING
+
+FOR EACH cliente WHERE cliente.id > 20 BREAK BY cliente.id DESCENDING:
+    DISPLAY cliente.
+END.
+
+// BREAK BY -> Funciona como um order by, ex: Break By cliente.id. 
+// DESCENDING-> Funciona como um DEC, usado para ver de forma decrescente.
+// FOR EACH -> iual a um select, funciona para fazer pesquisas no banco. 
+
+* ATUALIZAÇÃO 
+| ASSIGN | UPDATE |
+
+FIND LAST client.
+
+//ASSIGN cliente.nome = 'Gabriel'
+//UPDATE cliente.nome 
+
+MESSAGE cliente.nome VIEW-AS ALERT-BOX.
+
+//ASSIGN -> Aribui o valor novo de forma direta.
+//UPDATE -> Abre um display para voce trocar a mão o registro necessario. 
