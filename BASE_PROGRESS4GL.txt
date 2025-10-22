@@ -1,0 +1,241 @@
+- DEFINIÇÃO DE VARIVAVEIS: 
+
+//declaração de variaveis 
+DEF VAR iInteiro AS INT.
+DEF VAR dDecimal AS DEC FORMAT ">>,>>>,>>9.99".
+DEF VAR cChar    AS CHAR.
+DEF VAR lgChar   AS LONGCHAR.
+DEF VAR lBollean AS LOGICAL INITIAL YES.
+DEF VAR dDate    AS DATE.
+DEF VAR dtDateTime AS DATETIME.
+DEF VAR aArray   AS INT EXTENT 4.
+
+dDate = TODAY.
+dtDateTime = NOW.
+
+dDecimal = 1234.999.
+
+MESSAGE DAY(dDate)  SKIP 
+        MONTH(dDate)SKIP
+        YEAR(dDate) VIEW-AS ALERT-BOX TITLE "Data".
+MESSAGE dtDateTime VIEW-AS ALERT-BOX TITLE "Data/tempo".
+MESSAGE ddecimal VIEW-AS ALERT-BOX TITLE "Decimal".  
+
+//MESSAGE - MOSTRA COMO O DADO ESTA SALVO EM MEMORIA
+//VIEW-AS - VER COMO SETANDO COMO VAI FICAR O RESULTADO
+//ALERT   - BOX - CAIXA DE AVISO 
+//TITLE   - SETA O TITULO DA BOX 
+
+- CONTROLADORES ARITMETICOS/RELACIONAIS:
+
+DEF VAR iNum  AS INT INITIAL 10.
+DEF VAR iNum2 AS INT INITIAL 5.
+
+*ARITMETICOS
++ | - | * | / | MODULO | EXP(BASE,EXPOENTE)
+
+MESSAGE iNum + iNum2 VIEW-AS ALERT-BOX.
+MESSAGE iNum - iNum2 VIEW-AS ALERT-BOX.
+MESSAGE iNum * iNum2 VIEW-AS ALERT-BOX.
+MESSAGE iNum / iNum2 VIEW-AS ALERT-BOX.
+MESSAGE iNum MODULO iNum2 VIEW-AS ALERT-BOX.
+MESSAGE EXP(iNum, iNum2) VIEW-AS ALERT-BOX.
+
+*RELACIONAIS
+= | < | > | <>
+
+MESSAGE iNum = iNum2 VIEW-AS ALERT-BOX.
+MESSAGE iNum < iNum2 VIEW-AS ALERT-BOX.
+MESSAGE iNum > iNum2 VIEW-AS ALERT-BOX.
+MESSAGE iNum <> iNum2 VIEW-AS ALERT-BOX.
+
+//MODULO - MOSTRA O RESTO DA DIVISÃO
+//EXP - EPOENTE, EXP(BASE,EXPOENTE)
+ 
+- OPERADORES LÓGICOS: 
+AND | OR | NOT
+
+DEF VAR lLG  AS LOGICAL INITIAL YES.
+DEF VAR lLG2 AS LOGICAL INITIAL NO.
+
+IF (lLG AND lLG2) THEN
+DO:
+MESSAGE "ENTREI" VIEW-AS ALERT-BOX TITLE "ENTREI".     
+END.
+
+IF lLG OR lLG2 THEN
+DO:
+MESSAGE "ENTREI2" VIEW-AS ALERT-BOX TITLE "ENTREI2".     
+END.
+
+IF NOT lLG2 THEN
+DO:
+MESSAGE "ENTREI3" VIEW-AS ALERT-BOX TITLE "ENTREI3".
+END.
+
+- ESTRUTURAS CONDICIONAIS
+
+IF | ELSE | ELSE IF 
+
+DEF VAR iDade AS INT INITIAL 17.
+
+iDade = 60.
+
+IF iDade < 18 THEN
+DO:
+  MESSAGE "MENOR DE IDADE" VIEW-AS ALERT-BOX.      
+END.
+ELSE IF iDade >= 18 AND iDade < 60 THEN
+DO:
+    MESSAGE "ADUTO" VIEW-AS ALERT-BOX.
+END.
+ELSE DO:   
+    MESSAGE "IDOSO" VIEW-AS ALERT-BOX.
+END.
+
+| SWITCH CASE |
+
+DEF VAR cStatus AS CHAR.
+
+cStatus = "A".
+
+CASE cStatus:
+    WHEN "A" THEN
+    DO:
+       MESSAGE "ATIVO" VIEW-AS ALERT-BOX. 
+    END.
+    WHEN "I" THEN
+    DO:
+       MESSAGE "INATIVO" VIEW-AS ALERT-BOX.        
+    END.
+    OTHERWISE 
+    DO:
+       MESSAGE "NÃO APLICADO" VIEW-AS ALERT-BOX. 
+    END.
+END CASE.
+
+- ESTRUTURA DE REPETIÇÃO 
+
+| FOR |
+
+DEF VAR iCont AS INT INITIAL 1.
+DEF VAR iNumCont AS INT.
+DEF VAR iLog AS LOGICAL INITIAL NO.
+
+DO iCont = 1 TO 10:
+   iNumCont = iNUmCont + 1.
+   IF iNumCont >= 1 THEN
+   DO:
+     IF iNumCont = 10 THEN
+     DO:
+        iLog = YES.
+        iNumCont = 1.
+        MESSAGE "REINICIOU" iLog VIEW-AS ALERT-BOX.
+     END.
+   END.
+//conta ate 10 quando chega no 10 ele reinicia a contagem e sai    
+END.
+
+DO iCont = 1 TO 10 BY 2: //incrementa de 2 em 2, o BY server como um DE. 
+   
+END.
+
+| TEMP-TABLE | CREATE .. ASSIGN | FOR EACH | --SELECT
+
+DEF TEMP-TABLE cliente
+   FIELD nome AS CHAR
+   FIELD idade AS INT.
+// TEMP-TABLE - CRIA TABELA TEMPORARIA   
+// FIELD      - CRIA CAMPOS DA TABEL TEMP.
+
+CREATE cliente.
+ASSIGN cliente.nome = 'alisson'
+       cliente.idade = 26.
+//CREATE .. ASSIGN - FUNCIONA COMO UM INSERT DE REGISTRS NA TABELA TEMPORARIA.        
+       
+CREATE cliente.
+ASSIGN cliente.nome = 'alisson'
+       cliente.idade = 30.
+  
+CREATE cliente.
+ASSIGN cliente.nome = 'alisson'
+       cliente.idade = 35.
+       
+FOR EACH cliente WHERE cliente.idade > 30:
+MESSAGE cliente.nome SKIP
+        cliente.idade VIEW-AS ALERT-BOX. 
+END.
+//FOR EACH - FUNCIONA EXATAMENTE COMO UM SELECT, ELE FAZ UMA BUSCA EM UMA BANCO, EM UMA TABELA, EM REGISTROS...
+
+| REPEAT |
+
+NÃO SAI ATE QUE TENHA ALGUM CONTROLADOR DE FLUXO, É IGUAL UM WHILE .T. OU WHILE TRUE.
+
+DEF VAR iCont AS INT.
+
+REPEAT :
+   iCont = iCont + 1.
+   
+    IF iCont > 5 THEN
+    DO:
+      LEAVE.  
+    END.
+
+END.
+
+MESSAGE iCont VIEW-AS ALERT-BOX
+
+- CONTROLES DE FLUXOS
+
+| LEAVE | NEXT | RETURN |
+
+DEF TEMP-TABLE cliente
+   FIELD nome AS CHAR
+   FIELD idade AS INT.
+
+DEF VAR iCont AS INT.
+
+DO iCont = 0 TO 5:
+CREATE cliente.
+ASSIGN cliente.nome = 'alisson'
+       cliente.idade = 15 + iCont.       
+END.       
+
+RUN abc.
+
+PROCEDURE abc:
+    FOR EACH cliente :
+    
+        IF cliente.idade > 17 THEN
+        DO:
+            LEAVE.  //finaliza
+            NEXT.   //passa para o proiimo registro
+            RETURN. //vai sair do bloco principal, no caso o for each e a procedure. 
+        END.
+        
+        MESSAGE cliente.nome SKIP
+                cliente.idade VIEW-AS ALERT-BOX.
+    END.
+    
+       MESSAGE "FIM DA EXECUÇÃO DO SISTEMA" VIEW-AS ALERT-BOX.
+END PROCEDURE
+
+- MANIPULAÇÃO DE BANCO 
+
+| FIN FIRST |
+
+DEF VAR iCount AS INT.
+        /*
+ DO iCount = 0 TO 5:
+     CREATE cliente.
+        ASSIGN cliente.nome = 'ali'
+                cliente.data_nasc = TODAY
+                cliente.cpf = "13950194959"
+                cliente.id = NEXT-VALUE(seq-id-cliente).
+ END.
+*/
+
+FIND FIRST cliente. //achar o registro mais novo, 
+
+MESSAGE cliente.id VIEW-AS ALERT-BOX
+
