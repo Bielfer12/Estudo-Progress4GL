@@ -294,3 +294,134 @@ MESSAGE cliente.nome VIEW-AS ALERT-BOX.
 
 //ASSIGN -> Aribui o valor novo de forma direta.
 //UPDATE -> Abre um display para voce trocar a mão o registro necessario. 
+
+* EXCLUSÃO 
+
+| DELETE |
+
+FIND LAST cliente. 
+
+DELETE cliente. 
+
+//DELETE -> Nesse caso apaga o ultimo registro da minha tabela. 
+
+| BUFFER |
+
+DEF BUFFER bff-cliente FOR cliente. 
+
+FOR EACH cliente:
+     FIND FIRST bff-cliente.
+     
+END.
+
+//BUFFER -> Usado quando a tabela esta inacessivel por algum comando que ja esteja em pesquisa, dai voce da um alias e puxa ele no find, ou o que for. 
+
+| TEMP-TABLE ... LIKE ... | BUFFER-COPY ... TO ... |
+
+DEF TEMP-TABLE tt-cliente LIKE cliente. 
+          /*         
+CREATE tt-cliente. 
+    ASSIGN tt-cliente.nome = 'ali'
+            tt-cliente.id = NEXT-VALUE(seq01)
+            tt-cliente.data_nasc = TODAY
+            tt-cliente.cpf = '13950194959'
+        */          
+                
+BUFFER-COPY tt-cliente TO cliente.
+//copia os dados da tt-cliente para a cliente
+
+//TEMP-TABLE TO -> Fa uma copia de uma tabela, no caso pega os campos
+//BUFFER-COPY -> Faz a copi de registros de uma tabela para a outra.
+OBS -> como se fosse faço na tabela temporaria depois jogo para a original. 
+
+- FUNÇÕES E PROCEDURES
+
+* FUNÇÕES 
+
+| FUNCTION |
+
+FUNCTION soma RETURNS DECIMAL(INPUT a AS INT, INPUT b AS INT):
+
+    DEF VAR RESULT AS DEC. 
+    
+    RESULT = a + b. 
+    RETURN RESULT. 
+
+END FUNCTION. 
+
+
+DEF VAR d-total AS DEC. 
+
+d-total = soma(10,20).
+
+MESSAGE d-total VIEW-AS ALERT-BOX.
+
+// FUNCTION -> uma função normal aonde tem que falar o que vai dar de retorno, e trazer o retorno ao final, tambem trazendo os parametros. 
+
+* PROCEDURES
+- Usada como estrutura que organiza os códigos, podendo volta uma ou mais variaveis. 
+- Podendo criar procedures interna e externas. 
+
+Ex:
+PROCEDURE saudacao: //inicio procedure
+
+    MESSAGE 'OLA'.
+
+END PROCEDURE.
+
+RUN saudacao // roda a procedure
+
+-INTERNAS
+| INPUT | 
+
+PROCEDURE saudacao:
+
+    DEF INPUT PARAMETER nome AS CHAR
+
+    MESSAGE 'OLA' + nome VIEW-AS ALERT-BOX.
+
+END PROCEDURE.
+
+RUN saudacao(INPUT"Alisson")
+
+-Um parâmetro de entrada é usado quando você passa um valor para a procedure usar, mas não espera que ela altere sua variável.
+
+| OUTPUT |
+
+PROCEDURE saudacao:
+
+    DEF OUTPUT PARAMETER nome AS CHAR.
+
+    nome = 'Alisson'.
+
+END PROCEDURE.
+
+DEF VAR cmen AS CHAR.
+
+RUN saudacao(OUTPUT cmen).
+
+MESSAGE 'ola '+ cmen VIEW-AS ALERT-BOX.
+
+- Um parâmetro de saída é usado quando a procedure devolve um valor para quem chamou. Ou seja, você passa uma variável vazia e a procedure preenche com algum valor.
+
+| INPUT-OUTPUT |
+
+PROCEDURE atua:
+
+    DEF INPUT-OUTPUT PARAMETER valor AS DEC.
+    DEF VAR iImp AS INT INITIAL 10.
+    
+    ASSIGN valor *= 2.
+    
+    ASSIGN valor += (valor*(iImp/100)).
+END PROCEDURE.
+
+DEF VAR valor-final AS DEC INITIAL 100.
+
+RUN atua(INPUT-OUTPUT valor-final)
+
+MESSAGE valor-final VIEW-AS ALERT-BOX
+
+-EXTERNAS
+
+
