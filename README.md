@@ -7,6 +7,9 @@ O conteúdo abrange desde a **definição de variáveis** até **manipulação d
 > 🔧 Este material foi criado como base de estudos pessoais antes da integração do **Progress 4GL com JavaScript/Front-End**, para posterior uso como **back-end**.
 
 ---
+## 🎥 Playlist para aprender a base do Progress 4GL
+
+- <a href="https://www.youtube.com/playlist?list=PLBTtD0Md2yH0tJjZZQ05jfcNtn7fMQrYD">BASE PROGRESS 4GL</a>
 
 ## 📘 Conteúdos abordados
 
