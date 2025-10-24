@@ -535,4 +535,74 @@ END.
 //FILE-INFO:FILE-NAME -> Guarda o cainh do arquivo para comparar depois.
 //...:FULL-PATHNAME -> traz o caminh inteiro do que foi passado.
 
+* PROPRIEDADE ROWID
 
+OBS - ESTUDAR ISSO MAIS A FUNDO 
+
+DEF TEMP-TABLE tt-cliente LIKE cliente
+
+| ROWID |
+
+ FIELD rRowid AS ROWID.
+ 
+ bloco: 
+ DO TRANSACTION:
+ FIND LAST cliente.
+ CREATE tt-cliente.
+ BUFFER-COPY cliente TO tt-cliente.
+ ASSIGN tt-cliente.nome = "leo"
+        tt-cliente.data_nasc = TODAY
+        tt-cliente.rRowid = ROWID(cliente).
+        
+ //aplicadas as regras
+ FIND FIRST cliente WHERE ROWID(cliente) = tt-cliente.rRowid EXCLUSIVE-LOCK.
+    BUFFER-COPY tt-cliente TO cliente. 
+    
+ IF AVAIL cliente THEN
+ DO:
+    MESSAGE cliente.nome SKIP 
+            cliente.data_nasc VIEW-AS ALERT-BOX. 
+    
+    IF (YEAR(TODAY) - YEAR(cliente.data_nasc)) > 20 THEN
+    DO:
+       MESSAGE "erro ao atualizar o cliente" VIEW-AS ALERT-BOX.
+       UNDO bloco, LEAVE bloco.
+    END.
+ END.
+ 
+ END.
+ 
+ FOR EACH cliente:
+ DISPLAY cliente.
+ END.
+
+- ENTRADA E SAIDA DE ARQUIVOS. 
+
+* SAIDA DE ARQUIVOS. 
+
+| EXPORT |
+
+OUTPUT TO "C:\Porgress-procedures\planilha-teste.csv" APPEND.
+FOR EACH cliente:                               
+EXPORT DELIMITER ";"
+    cliente.i FORMAT "999"
+    cliente.nome
+    cliente.data_nasc FORMAT "99/99/9999".
+END.
+
+OUTPUT CLOSE.
+
+// EXPORT DELIMITER -> Exporta os dados para a planilha, delimitando por meio do ponto e virgula
+// APPEND -> Não sobreescreve os dados ja escritos no arquivo.
+
+| WITH CENTERED | FRAME a 1 COL CENTERED |
+
+OUTPUT TO "C:\Porgress-procedures\relatorio.bd".
+DISPLAY "relatorio de clientes " WITH CENTERED. 
+FOR EACH cliente:                               
+    DISPLAY cliente WITH FRAME a 1 COL CENTERED. 
+END.
+
+OUTPUT CLOSE.
+
+- Basicamente com esses dois aprametros voce estiliza o .txt, que é passado com o DISPLAY. 
