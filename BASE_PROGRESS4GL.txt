@@ -116,7 +116,7 @@ END CASE.
 
 - ESTRUTURA DE REPETIÇÃO 
 
-| FOR |
+| DO TO |
 
 DEF VAR iCont AS INT INITIAL 1.
 DEF VAR iNumCont AS INT.
@@ -423,5 +423,116 @@ RUN atua(INPUT-OUTPUT valor-final)
 MESSAGE valor-final VIEW-AS ALERT-BOX
 
 -EXTERNAS
+
+* Basicamente são procedures que da de pegar de fora do arquivo, como se fosse uma user function mesmo. 
+* nesse caso usasse o INPUT-OUTPUT, so que formulando que a procedure vai ser puxada de algum outro arquivo
+
+ferramenta: PROTOOLS -> PROPATH
+
+Nessa ferramenta voce consegue tirar o caminho absoluto , deixando so o arquivo que voce quer, no caso voce seta a pasta que irá ficar e automaticamente ele ira buscar no propath, se aquele arquivo existe em alguma das pastas setadas. 
+
+- ARQUIVO 01: 
+
+PROCEDURE atua:
+
+    DEF INPUT-OUTPUT PARAMETER valor AS DEC.
+    DEF VAR iImp AS INT INITIAL 10.
+    
+    RUN multi-2.p(INPUT-OUTPUT valor).
+    
+    ASSIGN valor +=(valor*(iImp/100)).
+    
+END PROCEDURE.
+
+DEF VAR valor-final AS DEC INITIAL 100.
+
+RUN atua(INPUT-OUTPUT valor-final)
+
+MESSAGE valor-final VIEW-AS ALERT-BOX
+
+- ARQUIVO 02:
+
+DEF INPUT-OUTPUT PARAMETER valor AS DEC.
+
+valor *= 2.
+
+- TRANSAÇÕES E TRATAMENTO DE ERROS. 
+
+* TRANSAÇÕES
+
+| DO TRANSACTION | -> | UNDO |
+
+- Usado para começar uma transação e se tiver algo acabar com ela com o UNDO. OBS: funciona como um begin transaction e rollback.
+
+DEF VAR iValor AS INT. 
+
+bloco:
+DO TRANSACTION:
+    
+    ASSIGN iValor = 9.
+    
+    IF iValor >= 9 THEN
+    DO:
+         MESSAGE '>= 9' VIEW-AS ALERT-BOX.
+         UNDO bloco, LEAVE bloco.
+    END.    
+END.
+
+MESSAGE iValor VIEW-AS ALERT-BOX.
+
+| NO-UNDO |
+
+-Colocado na variavel, não fazendo ela se desfazer por conta do UNDO. 
+
+DEF VAR iValor AS INT NO-UNDO. 
+
+* TRATAMENTO DE ERRO
+
+| ERROR-STATUS:ERROR | ERROR-STATUS:GET-MESSAGE(1) |
+ 
+DEF TEMP-TABLE tt-cliente
+    FIELD id AS INT.
+    
+bloco:
+DO TRANSACTION:
+
+    CREATE tt-cliente.
+            ASSIGN tt-cliente.id = 2.
+            
+    FIND FIRST tt-cliente WHERE tt-cliente.id = 123 NO-ERROR.
+    
+    IF ERROR-STATUS:ERROR THEN
+    DO:
+        MESSAGE 'erro sistema' ERROR-STATUS:GET-MESSAGE(1) VIEW-AS ALERT-BOX.
+        UNDO bloco, LEAVE bloco. 
+    END.
+END. 
+ 
+FIND FIRST tt-cliente.
+
+- ERROR-STATUS -> guarda infos do ultimo erro que deu.
+- NO-ERROR -> Não aparece erro na tela, deixa eu tratar manualmente. 
+- ...:ERROR -> Ele pergunta se houve algum erro no comando anterior, se sim retorna YES, se não retorna NO. 
+- ...:GET-MESSAGE(1) -> Se o :ERROR, trouxer verdadeiro voce pode pegar a mensagem de erro.
+
+| FILE-INFO:FILE-NAME | FILE-INFO:FULL-PATHNAME | 
+
+DEF VAR cArquivo AS CHAR. 
+
+cArquivo = "C:\Porgress-procedures\multi-2.p".
+
+FILE-INFO:FILE-NAME = cArquivo.
+
+IF FILE-INFO:FULL-PATHNAME = ? THEN
+DO:
+    MESSAGE "arquivo nao encontrado" VIEW-AS ALERT-BOX.
+END.
+ELSE DO:
+    MESSAGE 'arquivo encontrado' VIEW-AS ALERT-BOX. 
+END.
+
+//? -> Desconhecido, ou valor não existente. 
+//FILE-INFO:FILE-NAME -> Guarda o cainh do arquivo para comparar depois.
+//...:FULL-PATHNAME -> traz o caminh inteiro do que foi passado.
 
 
